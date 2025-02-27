@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Умная Кухня</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Умная Кухня</h1>
+    </header>
+    
+    <main>
+        <section id="product-section">
+            <h2>Добавление продуктов</h2>
+            <form id="fruit-form">
+                <input type="text" id="fruit-name" placeholder="Название фрукта">
+                <select id="fruit-type">
+                    <option value="переходящий">Переходящий</option>
+                    <option value="не-переходящий">Не-переходящий</option>
+                </select>
+                <button type="submit">Добавить фрукт</button>
+            </form>
+
+            <form id="grain-form">
+                <input type="text" id="grain-name" placeholder="Название зерна">
+                <select id="grain-type">
+                    <option value="переходящий">Переходящий</option>
+                    <option value="не-переходящий">Не-переходящий</option>
+                </select>
+                <button type="submit">Добавить зерно</button>
+            </form>
+
+            <form id="kitchen-item-form">
+                <input type="text" id="kitchen-item-name" placeholder="Название кухонного предмета">
+                <input type="number" id="kitchen-item-quantity" min="1" max="100" value="1">
+                <button type="submit">Добавить кухонный предмет</button>
+            </form>
+
+            <div id="product-list"></div>
+        </section>
+
+        <section id="analyze-section">
+            <h2>Анализ пользовательского ввода</h2>
+            <textarea id="user-input" rows="4" cols="50" placeholder="Введите запрос пользователя..."></textarea>
+            <button onclick="analyzeInput()">Анализировать</button>
+            <pre id="analysis-result"></pre>
+        </section>
+
+        <section id="suggest-products">
+            <h2>Предложенные продукты</h2>
+            <ul id="suggested-products"></ul>
+        </section>
+
+        <section id="check-kitchen-items">
+            <h2>Проверка кухонных предметов</h2>
+            <textarea id="recipe-text" rows="4" cols="50" placeholder="Введите рецепт..."></textarea>
+            <button onclick="checkKitchenItems()">Проверить</button>
+            <pre id="missing-items"></pre>
+        </section>
+
+        <section id="iot-data">
+            <h2>Обработка данных IoT</h2>
+            <table id="iot-table">
+                <thead>
+                    <tr>
+                        <th>Сенсор ID</th>
+                        <th>Тип сенсора</th>
+                        <th>Значение</th>
+                    </tr>
+                </thead>
+                <tbody id="iot-data-body"></tbody>
+            </table>
+        </section>
+
+        <section id="order-section">
+            <h2>Отправка заказа</h2>
+            <input type="number" id="order-id" min="1" max="1000000" value="1">
+            <input type="text" id="delivery-address" placeholder="Адрес доставки">
+            <button onclick="sendOrder()">Отправить заказ</button>
+            <p id="order-status"></p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2023 Умная Кухня</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
