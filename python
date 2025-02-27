@@ -1,0 +1,204 @@
+import datetime
+
+
+class DatabaseManager:
+    def __init__(self):
+        self.products = {}
+        self.kitchen_items = {}
+
+    def connect(self):
+        print("База данных подключена успешно.")
+
+    def disconnect(self):
+        print("Подключение к базе данных закрыто.")
+
+    def create_user(self, username, email, password):
+        # Этот метод не используется в текущей версии
+        pass
+
+    def get_all_users(self):
+        # Этот метод не используется в текущей версии
+        return []
+
+    def add_product(self, name, type, expiration_date=None):
+        self.products[name] = {
+            'type': type,
+            'expiration_date': expiration_date
+        }
+        print(f"{name} добавлен в список продуктов.")
+
+    def get_all_products(self):
+        valid_products = []
+        for name, details in self.products.items():
+            if 'type' in details and 'expiration_date' in details:
+                valid_products.append({'name': name, **details})
+            else:
+                print(f"Ошибка: Недостаточно данных для продукта {name}")
+        return valid_products
+
+    def add_kitchen_item(self, name, quantity=1):
+        self.kitchen_items[name] = {
+            'quantity': quantity
+        }
+        print(f"{name} добавлен в список мебели.")
+
+    def get_all_kitchen_items(self):
+        return list(self.kitchen_items.values())
+
+
+class AlgorithmEngine:
+    def __init__(self):
+        self.db = DatabaseManager()
+        self.db.connect()
+
+    def analyze_user_input(self, input_text):
+        words = input_text.lower().split()
+        word_counts = {}
+        for word in words:
+            if word in word_counts:
+                word_counts[word] += 1
+            else:
+                word_counts[word] = 1
+
+        return word_counts
+
+    def suggest_products(self, user_needs):
+        suggested_products = []
+
+        all_products = self.db.get_all_products()
+        for product in all_products:
+            if 'type' not in product or 'expiration_date' not in product:
+                print(f"Ошибка: Недостаточно данных для продукта {product['name']}")
+                continue
+
+            if product['type'] == 'perishable':
+                if not product['expiration_date']:
+                    suggested_products.append(product)
+                elif datetime.now() > product['expiration_date']:
+                    suggested_products.append(product)
+
+        return suggested_products
+
+    def check_kitchen_items(self, recipe):
+        required_items = self.parse_recipe(recipe)
+        available_items = self.db.get_all_kitchen_items()
+
+        missing_items = [item for item in required_items if item not in [i['name'] for i in available_items]]
+
+        return missing_items
+
+    def parse_recipe(self, recipe_text):
+        ingredients = recipe_text.split('\n')
+        parsed_ingredients = [ingredient.strip() for ingredient in ingredients if ingredient.strip()]
+        return parsed_ingredients
+
+    def process_iot_data(self, sensor_data):
+        processed_data = {}
+        for sensor in sensor_data:
+            sensor_id = sensor['sensor_id']
+            sensor_type = sensor['sensor_type']
+            value = sensor['value']
+
+            if sensor_type == 'temperature':
+                processed_data[sensor_id] = {'type': 'temperature', 'value': value}
+            elif sensor_type == 'humidity':
+                processed_data[sensor_id] = {'type': 'humidity', 'value': value}
+            elif sensor_type == 'motion':
+                processed_data[sensor_id] = {'type': 'motion', 'value': value}
+
+        return processed_data
+
+    def send_order_to_ecommerce(self, order_details):
+        print(f"Заказ отправлен в электронную коммерцию: {order_details}")
+        return True
+
+
+def add_fruits(db):
+    fruits = [
+        ("Банан", "переходящий", None),
+        ("Яблоко", "переходящий", None),
+        ("Апельсин", "переходящий", None),
+        ("Клубника", "переходящий", None),
+        ("Грейпфрут", "переходящий", None)
+    ]
+
+    for fruit in fruits:
+        db.add_product(fruit[0], fruit[1], fruit[2] if len(fruit) == 3 else None)
+
+
+def add_grains(db):
+    grains = [
+        ("Рис", "не-переходящий"),
+        ("Спагетти", "не-переходящий"),
+        ("Хлеб", "переходящий", None),
+        ("Овсянка", "не-переходящий"),
+        ("Кукуруза", "не-переходящий")
+    ]
+
+    for grain in grains:
+        db.add_product(grain[0], grain[1], grain[2] if len(grain) == 3 else None)
+
+
+def add_kitchen_items(db):
+    kitchen_items = [
+        ("Сковорода", 1),
+        ("Котелок", 1),
+        ("Дуршлаг", 1),
+        ("Деревянная ложка", 1),
+        ("Машинка", 1),
+        ("Тепловой шкаф", 1),
+        ("Тостер", 1),
+        ("Микроволновая печь", 1),
+        ("Варочная панель", 1),
+        ("Блендер", 1)
+    ]
+
+    for item in kitchen_items:
+        db.add_kitchen_item(item[0], item[1])
+
+
+# Использование примера
+db = DatabaseManager()
+engine = AlgorithmEngine()
+
+add_fruits(db)
+add_grains(db)
+add_kitchen_items(db)
+
+print("Добавленные продукты и мебель:")
+print(engine.db.get_all_products())
+print(engine.db.get_all_kitchen_items())
+
+# Пример использования
+user_input = "Я хочу узнать о продуктах для завтрака."
+analyzed_input = engine.analyze_user_input(user_input)
+print("Анализированная входная информация:", analyzed_input)
+suggested_products = engine.suggest_products(analyzed_input)
+print("Предложенные продукты:", suggested_products)
+
+recipe = """
+500 г курятины филе
+250 г помидоров
+150 г лука
+2 зубчика чеснока
+1 столовая ложка растительное масло
+1 столовая ложка томатной пасты
+"""
+missing_items = engine.check_kitchen_items(recipe)
+print("Отсутствующие предметы кухни:", missing_items)
+
+sensor_data = [
+    {'sensor_id': 1, 'sensor_type': 'temperature', 'value': 22},
+    {'sensor_id': 2, 'sensor_type': 'humidity', 'value': 60},
+    {'sensor_id': 3, 'sensor_type': 'motion', 'value': 0}
+]
+processed_data = engine.process_iot_data(sensor_data)
+print("Обработанные данные IoT:", processed_data)
+
+order_details = {
+    "product_id": 1,
+    "quantity": 5,
+    "delivery_address": "Москва, улица Ленина"
+}
+order_sent = engine.send_order_to_ecommerce(order_details)
+print("Статус отправки заказа:", "Успешно" if order_sent else "Ошибка")
